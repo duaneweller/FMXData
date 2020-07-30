@@ -1,6 +1,6 @@
 # FMXData
 
-** A PHP library for the FileMaker Data API **
+**A PHP library for the FileMaker Data API**
 
 
 EXAMPLE CODE AND DOCUMENTATION IS IN THE [PDF MANUAL](manual.pdf)
@@ -57,6 +57,54 @@ The log in features were not necessarily needed for what I plan to use fmxData f
 
 ## PREPARING FILEMAKER SERVER
 
+**Enable the FileMaker Data API**
+
 Go into the FileMaker Server Admin Console, under the connections area select the "FileMaker Data API" and enable it.
 
+
+**Enable PHP**
+
+If you have not already enabled PHP for the Custom Web Publishing engine you'll need to open the command line tool (Windows) or Terminal on Mac and enter in this command. Do not "sudo" this on Mac, just type this at the prompt and tap the enter key...
+
+```
+fmsadmin set cwpconfig enablephp=true
+```
+
+You'll need to enter your FileMaker Server admin console username and password, then restart the FileMaker Server for the changes to take effect.
+
+## INSTALLING THE EXAMPLE FILES
+
+1. Host the FMXData.fmp12 with FileMaker Server. Use the "Upload to Host" feature in FileMaker Pro Advanced (under "File -> Sharing -> Upload to Host") to upload the FMXData.fmp12 to the server.
+
+Open the FMXData.fmp12 with the following credentials: 
+
+Username: admin
+Password: admin
+
+2. If you have not already done so, enable the FileMaker Data API in the FileMaker Server Admin Console. Under the connections area select the "FileMaker Data API" and enable it.
+
+3. If you have not already done so, enable PHP from the command line. Open the command line tool (Windows) or Terminal on Mac and enter in the command below. Do not "sudo" this in Terminal. You'll need to enter your FileMaker Server admin console username and password, then restart the FileMaker Server for the changes to take effect.
+
+```
+fmsadmin set cwpconfig enablephp=true
+```
+
+4. Add the example.php, FMXData.php, and photo.jpg files to the FileMaker Server's Web Server root folder.
+
+The web server's root folder will be in the FileMaker Server directory...
+
+Windows: [drive]:\Program Files\FileMaker\FileMaker Server\HTTPServer\conf
+
+macOS: /Library/FileMaker Server/HTTPServer/htdocs 
+
+
+**Accessing the Example Files from a Browser**
+
+Open a web browser and go to the following URL:
+
+[http://localhost/example.php](http://localhost/example.php)
+
+## FOR FURTHER INFORMATION ABOUT THE FUNCTIONS CHECK OUT THE MANUAL
+
+[manual.pdf](manual.pdf)
 
