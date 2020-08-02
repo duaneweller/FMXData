@@ -4,8 +4,12 @@
  * FMX - A PHP library for the FileMaker Server Data API
  *
  * Copyright (c) 2020, Duane Weller (Excelisys, Inc.)
+ * Version 0.1.0 (beta)
+ * 
+ * THIS LIBRARY HAS NOT BEEN FULLY TESTED IN A PRODUCTION ENVIRONMENT
+ * *****************  USE AT YOUR OWN RISK **************************
  *
- * @version 1.0
+ * @version 0.1.0
  * @package FMXData
  * @author Duane Weller (Excelisys, Inc.)
  */
