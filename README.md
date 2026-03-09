@@ -3,7 +3,7 @@
 **A PHP library for the FileMaker Data API**
 
 
-EXAMPLE CODE AND DOCUMENTATION IS IN THE [PDF MANUAL](fmxData-doc-030.pdf)
+EXAMPLE CODE AND DOCUMENTATION IS IN THE [PDF MANUAL](fmxData-doc-031.pdf)
 
 
 ## WHAT IS FMXDATA?
@@ -92,5 +92,5 @@ http://[localhost or web servers ip]/example.php
 
 ## FOR FURTHER INFORMATION ABOUT THE FUNCTIONS CHECK OUT THE MANUAL
 
-[fmxData-doc-030.pdf](fmxData-doc-030.pdf)
+[fmxData-doc-031.pdf](fmxData-doc-031.pdf)
 
