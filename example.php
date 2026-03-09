@@ -9,7 +9,7 @@
 
 	// Connect to the Database
 	echo '** FILEMAKER CONNECT **<br />';
-	$connect = FMXData::fmxConnect('localhost','FMXData','fmxdata','fmxdata','disable');
+	$connect = FMXData::fmxConnect('192.168.4.102','FMXData','fmxdata','fmxdata','disable');
 	print_r($connect);
 	echo '<br /><br />';
 
@@ -51,9 +51,6 @@
 	$fmx = new FMXData();
 	$fmx->addPostFieldArray($data);
 	$fmx->addPostField('Company','Excelisys Inc');
-	$fmx->addScript('FMX_Script','param1');
-	$fmx->addPresortScript('FMX_Presort_Script','param2');
-	$fmx->addPrerequestScript('FMX_Prerequest_Script','param3');
 	$createRecord = $fmx->fmxCreateRecord('CONTACT');
 	print_r($createRecord);
 	echo '<br /><br />';
@@ -67,9 +64,6 @@
 	$fmx = new FMXData();
 	$fmx->addPostFieldArray($data);
 	$fmx->addPostField('Company','Excelisys Inc');
-	$fmx->addScript('FMX_Script','param1');
-	$fmx->addPresortScript('FMX_Presort_Script','param2');
-	$fmx->addPrerequestScript('FMX_Prerequest_Script','param3');
 	$editRecord = $fmx->fmxEditRecord('CONTACT',$recId);
 	print_r($editRecord);
 	echo '<br /><br />';
@@ -77,9 +71,6 @@
 	// delete an existing record
 	echo '** DELETE RECORD **<br />';
 	$fmx = new FMXData();
-	$fmx->addScript('FMX_Script','param1');
-	$fmx->addPresortScript('FMX_Presort_Script','param2');
-	$fmx->addPrerequestScript('FMX_Prerequest_Script','param3');
 	$deleteRecord = $fmx->fmxDeleteRecord('CONTACT',$recId);
 	print_r($deleteRecord);
 	echo '<br /><br />';
@@ -87,13 +78,7 @@
 	// get an existing record
 	echo '** GET RECORD **<br />';
 	$fmx = new FMXData();
-	$fmx->setResponseLayout('CONTACT');
-	$fmx->addScript('FMX_Script','param1');
-	$fmx->addPresortScript('FMX_Presort_Script','param2');
-	$fmx->addPrerequestScript('FMX_Prerequest_Script','param3');
-	$fmx->limitPortals('phone_portal,email_portal');
-	$fmx->limitPortalRows('phone_portal',1,2);
-	$getRecord = $fmx->fmxGetRecord('CONTACT_LIST',15297);
+	$getRecord = $fmx->fmxGetRecord('CONTACT',15297);
 	print_r($getRecord);
 	echo '<br /><br />';
 
@@ -101,11 +86,6 @@
 	echo '** GET RANGE OF RECORDS **<br />';
 	$fmx = new FMXData();
 	$fmx->setResponseLayout('CONTACT_LIST');
-	$fmx->addScript('FMX_Script','param1');
-	$fmx->addPresortScript('FMX_Presort_Script','param2');
-	$fmx->addPrerequestScript('FMX_Prerequest_Script','param3');
-	$fmx->addSortParam('First Name','ascend',2);
-	$fmx->addSortParam('Last Name','ascend',1);
 	$fmx->setLimitOffset(10,50);
 	$getRange = $fmx->fmxGetRange('CONTACT');
 	print_r($getRange);
@@ -114,8 +94,18 @@
 	// upload a file to a container field
 	echo '** UPLOAD A FILE **<br />';
 	$path = __DIR__.'/photo.jpg';
-	$upload = FMXData::fmxUploadFile('CONTACT',15297,'Photo',1,$path);
+	$upload = FMXData::fmxUploadFile($path,'CONTACT',15297,'Photo');
 	print_r($upload);
+	echo '<br /><br />';
+	
+	// download a file - get the url from the fmxGetRecord query
+	echo '** DOWNLOAD A FILE **<br />';
+	$url = $getRecord['response']['data'][0]['fieldData']['Photo'];
+	$download = FMXData::fmxContainerData($url);
+	$filename = 'download.jpg';
+	$filepath = __DIR__.'/'.$filename;
+	file_put_contents($filepath, $download);
+	echo '<img src="'.$filename.'" width="50px">';
 	echo '<br /><br />';
 	
 	// set global fields
@@ -134,11 +124,6 @@
 	$fmx->addRequestArray(array('Company'=>'Bayer Ltd'));
 	$fmx->addRequestArray(array('Company'=>'Bayer Group'));
 	$fmx->addRequestArray(array('Job Title'=>'Teacher'),TRUE);
-	$fmx->addSortParam('First Name','ascend',2);
-	$fmx->addSortParam('Last Name','ascend',1);
-	$fmx->addScript('FMX_Script','param1');
-	$fmx->addPresortScript('FMX_Presort_Script','param2');
-	$fmx->addPrerequestScript('FMX_Prerequest_Script','param3');
 	$fmx->setLimitOffset(10);
 	$findRecords = $fmx->fmxFindRecords('CONTACT');
 	print_r($findRecords);

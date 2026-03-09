@@ -3,13 +3,9 @@
 /**
  * FMX - A PHP library for the FileMaker Server Data API
  *
- * Copyright (c) 2020, Duane Weller (Excelisys, Inc.)
- * Version 0.1.0 (beta)
- * 
- * THIS LIBRARY HAS NOT BEEN FULLY TESTED IN A PRODUCTION ENVIRONMENT
- * *****************  USE AT YOUR OWN RISK **************************
+ * Copyright (c) 2026, Duane Weller (Excelisys, Inc.)
  *
- * @version 0.1.0
+ * @version 0.3.0
  * @package FMXData
  * @author Duane Weller (Excelisys, Inc.)
  */
@@ -28,7 +24,7 @@ $fmx_token = NULL;
 $fmx_ssl_verify = NULL;
 
 class FMXData
-{	
+{
 	
 	public function __construct() {
        
@@ -48,7 +44,7 @@ class FMXData
 	 * @param $username - The username of the FileMaker account.
 	 * @param $password - The password of the FileMaker account.
 	 */
-	public static function fmxConnect($host, $database, $username, $password, $sslVerify = 'enable')
+	public static function fmxConnect($host, $database, $username, $password, $sslVerify = 'disable')
 	{
 		global $fmx_host;
 		global $fmx_database;
@@ -78,7 +74,7 @@ class FMXData
 		$udat['databases'] = 'databases';
 		$udat['database'] = $fmx_database;
 		$udat['sessions'] = 'sessions';
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 	
 		// send request to FileMaker Server
 		$query = SELF::curlSession($url,'POST');
@@ -112,7 +108,7 @@ class FMXData
 		$udat['database'] = $fmx_database;
 		$udat['sessions'] = 'sessions';
 		$udat['token'] = $fmx_token;
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		// send request to FileMaker Server
 		$result = SELF::curlSession($url,'DELETE');
@@ -141,7 +137,7 @@ class FMXData
 		$udat['data'] = 'data';
 		$udat['apiVersion'] = FMX_APIVERSION;
 		$udat['productInfo'] = 'productInfo';
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		// send request to FileMaker Server
 		$result = SELF::curlSession($url,'GET');
@@ -167,7 +163,7 @@ class FMXData
 		$udat['data'] = 'data';
 		$udat['apiVersion'] = FMX_APIVERSION;
 		$udat['databases'] = 'databases';
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		// send request to FileMaker Server
 		$result = SELF::curlSession($url,'GET');
@@ -189,6 +185,8 @@ class FMXData
 		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_COOKIEJAR,"");
+
 		if($fmx_ssl_verify == 'disable')
 		{
 			// required if SSL is default cert or self signed
@@ -214,6 +212,40 @@ class FMXData
 		return $result;
 	}
 	
+	/*
+	 * fmxContainerData
+	 *
+	 * Retrieves container data using the current fmx session. 
+	 *
+	 */
+	public static function fmxContainerData($url)
+	{
+		global $fmx_token;
+		global $fmx_ssl_verify;
+		
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_COOKIEFILE,"");
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
+		if($fmx_ssl_verify == 'disable')
+		{
+			// required if SSL is default cert or self signed
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+		}
+		
+		// set default header
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+			'Authorization: Bearer '.$fmx_token
+		));
+		
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		$result = curl_exec($ch);
+		curl_close($ch);
+		
+		return $result;
+	}
 	
 	
 	
@@ -298,7 +330,17 @@ class FMXData
 	 */
 	public function addPostFieldArray($data)
 	{
-		$this->fmxFieldDataArray = array_merge($this->fmxFieldDataArray, $data);
+		// Data API seems to have issues with null values
+		// if $value is null sets an empty string instead
+		foreach($data as $key=>$value)
+		{
+			if(isset($value))
+			{
+				$this->fmxFieldDataArray[$key] = $value;
+			} else {
+				$this->fmxFieldDataArray[$key] = '';
+			}
+		}
 	}
 	 
 	/*
@@ -312,9 +354,14 @@ class FMXData
 	 */
 	public function addPostField($field,$value)
 	{
-		$paramArray = $this->fmxFieldDataArray;
-		$paramArray[$field] = $value;
-		$this->fmxFieldDataArray = $paramArray;
+		// Data API seems to have issues with null values
+		// if $value is null sets an empty string instead
+		if(isset($value))
+		{
+			$this->fmxFieldDataArray[$field] = $value;
+		} else {
+			$this->fmxFieldDataArray[$field] = '';
+		}
 	}
 	 
 	/*
@@ -550,7 +597,7 @@ class FMXData
 		$udat['databases'] = 'databases';
 		$udat['database'] = $fmx_database;
 		$udat['scripts'] = 'scripts';
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		// send request to FileMaker Server
 		$result = SELF::curlFileMaker($url,NULL,'GET');
@@ -580,7 +627,7 @@ class FMXData
 		$udat['databases'] = 'databases';
 		$udat['database'] = $fmx_database;
 		$udat['layouts'] = 'layouts';
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		// send request to FileMaker Server
 		$result = SELF::curlFileMaker($url,NULL,'GET');
@@ -613,7 +660,7 @@ class FMXData
 		$udat['database'] = $fmx_database;
 		$udat['layouts'] = 'layouts';
 		$udat['layoutName'] = $layout;
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		// For layout metadata recordId is added to the query string.
 		// Use of the fmxQueryStringArray is not required here.
@@ -655,7 +702,7 @@ class FMXData
 		$udat['layouts'] = 'layouts';
 		$udat['layoutName'] = $layout;
 		$udat['records'] = 'records';
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		// get the field data array
 		$query['fieldData'] = $this->fmxFieldDataArray;
@@ -702,7 +749,7 @@ class FMXData
 		$udat['layoutName'] = $layout;
 		$udat['records'] = 'records';
 		$udat['recordId'] = $recId;
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);		
 		
 		// get the field data array
 		$query['fieldData'] = $this->fmxFieldDataArray;
@@ -711,14 +758,14 @@ class FMXData
 		$query = array_merge($query, $this->fmxScriptArray);
 		
 		// add the query string
-		if(isset($this->fmxQueryStringArray))
+		if(!empty($this->fmxQueryStringArray))
 		{
 			$url = $url.'?'.http_build_query($this->fmxQueryStringArray);
 		}
 		
 		// send request to FileMaker Server
 		$result = $this->curlFileMaker($url,$query,'PATCH');
-		
+				
 		return $result;
 	}
 	
@@ -749,7 +796,7 @@ class FMXData
 		$udat['layoutName'] = $layout;
 		$udat['records'] = 'records';
 		$udat['recordId'] = $recId;
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		// For DELETE functions -  merge script options with the query string.
 		$this->fmxQueryStringArray = array_merge($this->fmxQueryStringArray, $this->fmxScriptArray);
@@ -793,7 +840,7 @@ class FMXData
 		$udat['layoutName'] = $layout;
 		$udat['records'] = 'records';
 		$udat['recordId'] = $recId;
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		// For GET functions -  merge script options with the query string.
 		$this->fmxQueryStringArray = array_merge($this->fmxQueryStringArray, $this->fmxScriptArray);
@@ -835,7 +882,7 @@ class FMXData
 		$udat['layouts'] = 'layouts';
 		$udat['layoutName'] = $layout;
 		$udat['records'] = 'records';
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		// For GET functions -  merge script options with the query string.
 		$this->fmxQueryStringArray = array_merge($this->fmxQueryStringArray, $this->fmxScriptArray);
@@ -844,6 +891,7 @@ class FMXData
 		if(isset($this->fmxSortArray))
 		{
 			$sorts = $this->fmxSortArray;
+			$sortArray = array();
 			for ( $i = 0; $i <= count($sorts); $i++ )
 			{
 				if(isset($sorts[$i]))
@@ -872,13 +920,13 @@ class FMXData
 	 * Uses the curlFileMaker function to upload
 	 * a file to the FileMaker database.
 	 *
+	 * @param $pathToFile - The path to the file on disk.
 	 * @param $layout - The FileMaker Layout to query.
 	 * @param $recId - The id of the record to upload.
 	 * @param $field - The field to uplod into.
 	 * @param $repetition - The field repetition to upload into.
-	 * @param $pathToFile - The path to the file on disk.
 	 */
-	public static function fmxUploadFile( $layout, $recId, $field, $repetition = 1, $pathToFile )
+	public static function fmxUploadFile( $pathToFile, $layout, $recId, $field, $repetition = 1 )
 	{
 		global $fmx_host;
 		global $fmx_database;
@@ -899,14 +947,13 @@ class FMXData
 		$udat['containers'] = 'containers';
 		$udat['field'] = $field;
 		$udat['repetition'] = $repetition;
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		// extract the file name
 		$pathArray = explode('/',$pathToFile);
 		$fileName = $pathArray[(count($pathArray) - 1)];
 		
 		// Set the upload parameter with curl_file_create
-		// for PHP versions > 5.5. The @ format is now deprecated.
 		$postfields['upload'] = curl_file_create($pathToFile);
 		$postfields['filename'] = $fileName;
 		
@@ -939,7 +986,7 @@ class FMXData
 		$udat['layouts'] = 'layouts';
 		$udat['layoutName'] = $layout;
 		$udat['find'] = '_find';
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		// get the query request array
 		$query['query'] =  $this->fmxQueryRequestArray;
@@ -964,7 +1011,7 @@ class FMXData
 		}
 		
 		// add sort parameters to query string
-		if(isset($this->fmxSortArray))
+		if(count($this->fmxSortArray) != 0)
 		{
 			$sorts = $this->fmxSortArray;
 			for ( $i = 0; $i <= count($sorts); $i++ )
@@ -1008,7 +1055,7 @@ class FMXData
 		$udat['databases'] = 'databases';
 		$udat['database'] = $fmx_database;
 		$udat['globals'] = 'globals';
-		$url = implode($udat,'/');
+		$url = implode('/',$udat);
 		
 		$query['globalFields'] = $this->fmxGlobalFieldArray;
 		
@@ -1032,6 +1079,7 @@ class FMXData
 	{
 		global $fmx_token;
 		global $fmx_ssl_verify;
+		global $fmx_cookie;
 		
 		// initialize cURL
 		$ch = curl_init();

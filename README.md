@@ -31,6 +31,7 @@ fmxData supports all of the following Data API features.
 - Get a Record
 - Get a Range of Records
 - Upload a File to a Container Field
+- Download a Container Field File
 - Find FileMaker Records
 - Set FileMaker Globals
 - Set a Response Layout
@@ -62,15 +63,9 @@ The log in features were not necessarily needed for what I plan to use fmxData f
 Go into the FileMaker Server Admin Console, under the connections area select the "FileMaker Data API" and enable it.
 
 
-**Enable PHP**
+**Hosting your PHP files**
 
-If you have not already enabled PHP for the Custom Web Publishing engine you'll need to open the command line tool (Windows) or Terminal on Mac and enter in this command. Do not "sudo" this on Mac, just type this at the prompt and tap the enter key...
-
-```
-fmsadmin set cwpconfig enablephp=true
-```
-
-You'll need to enter your FileMaker Server admin console username and password, then restart the FileMaker Server for the changes to take effect.
+Since the PHP option was deprecated I've moved to a development environment that includes two computers, one to host FileMaker Server and the other to host my web server. This allows me to maintain a stock install of FileMaker Server that doesn't require configuration beyond the FileMaker Server Console. I run FileMaker Server by itself and run the web server on my development workstation. You will need to have a web server separate from the FileMaker Server to host your PHP files. Although I've never tried it, I don't see why you couldn't run FileMaker server in some sort of Virtual Machine (VM) on the same computer as your web server.
 
 ## INSTALLING THE EXAMPLE FILES
 
@@ -83,26 +78,17 @@ Password: admin
 
 2. If you have not already done so, enable the FileMaker Data API in the FileMaker Server Admin Console. Under the connections area select the "FileMaker Data API" and enable it.
 
-3. If you have not already done so, enable PHP from the command line. Open the command line tool (Windows) or Terminal on Mac and enter in the command below. Do not "sudo" this in Terminal. You'll need to enter your FileMaker Server admin console username and password, then restart the FileMaker Server for the changes to take effect.
+3. Set up and configure a web server on a separate computer from FileMaker Server. Install your web server of choice and PHP. 
 
-```
-fmsadmin set cwpconfig enablephp=true
-```
-
-4. Add the example.php, FMXData.php, and photo.jpg files to the FileMaker Server's Web Server root folder.
-
-The web server's root folder will be in the FileMaker Server directory...
-
-Windows: [drive]:\Program Files\FileMaker\FileMaker Server\HTTPServer\conf
-
-macOS: /Library/FileMaker Server/HTTPServer/htdocs 
-
+4. Add the example.php, FMXData.php, and photo.jpg files to the web server's root folder.
+The web server's root folder will depend on server you choose. Consult your server's documentation for the location.
 
 **Accessing the Example Files from a Browser**
 
 Open a web browser and go to the following URL:
 
-[http://localhost/example.php](http://localhost/example.php)
+http://[localhost or web servers ip]/example.php
+
 
 ## FOR FURTHER INFORMATION ABOUT THE FUNCTIONS CHECK OUT THE MANUAL
 
