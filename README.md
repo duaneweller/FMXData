@@ -51,7 +51,6 @@ fmxData does not yet support the following FileMaker Data API features.
 - Log in to an external data source
 - Log in to a database session using an OAuth identity provider
 - Log in to a database session using a FileMaker ID account
-- Duplicate a record
 - Logging or Debugging
 - Checks or traps for FileMaker errors
 
