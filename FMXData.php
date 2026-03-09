@@ -723,6 +723,50 @@ class FMXData
 	}
 	
 	/*
+	 * fmxDuplicateRecord
+	 *
+	 * Uses the curlFileMaker function to duplicate 
+	 * a record in the FileMaker database.
+	 *
+	 * @param $layout - The FileMaker Layout to query.
+	 * @param $recId - The recordId of the record to be duplicated.
+	 */
+	 public function fmxDuplicateRecord($layout, $recId)
+	 {
+	 	global $fmx_host;
+		global $fmx_database;
+		
+		// assemble the URL
+		$udat['protocal'] = FMX_PROTOCAL;
+		$udat['space'] = '';
+		$udat['host'] = $fmx_host;
+		$udat['fmi'] = 'fmi';
+		$udat['data'] = 'data';
+		$udat['apiVersion'] = FMX_APIVERSION;
+		$udat['databases'] = 'databases';
+		$udat['database'] = $fmx_database;
+		$udat['layouts'] = 'layouts';
+		$udat['layoutName'] = $layout;
+		$udat['records'] = 'records';
+		$udat['recordId'] = $recId;
+		$url = implode('/',$udat);
+		
+		// For DUPLICATE functions -  merge script options with the query string.
+		$this->fmxQueryStringArray = array_merge($this->fmxQueryStringArray, $this->fmxScriptArray);
+		
+		// add the query string
+		if(isset($this->fmxQueryStringArray))
+		{
+			$url = $url.'?'.http_build_query($this->fmxQueryStringArray);
+		}
+		
+		// send request to FileMaker Server
+		$result = $this->curlFileMaker($url,NULL,'DUPLICATE');
+		
+		return $result;
+	 }
+	
+	/*
 	 * fmxEditRecord
 	 *
 	 * Uses the curlFileMaker function to edit 
@@ -1102,7 +1146,7 @@ class FMXData
 		
 		// set options based on actions
 		if($action == 'UPLOAD') {
-			// The upload is sent as POST.
+			// Uploads are sent as POST.
 			// Multipart/form-data will automatically get set when the
 			// CURLOPT_POSTFIELDS are set as an array instead of a string.
 			// The CURLOPT_HTTPHEADER is reset here to override the default.
@@ -1110,6 +1154,9 @@ class FMXData
 				'Authorization: Bearer '.$fmx_token
 			));
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
+		} elseif($action == 'DUPLICATE') {
+			// duplicate must go as post
+			curl_setopt($ch, CURLOPT_POST, true);
 		} elseif($action == 'POST') {
 			if($postfields)
 			{

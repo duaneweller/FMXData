@@ -74,6 +74,13 @@
 	$deleteRecord = $fmx->fmxDeleteRecord('CONTACT',$recId);
 	print_r($deleteRecord);
 	echo '<br /><br />';
+	
+	// duplicate a record
+	echo '** DUPLICATE RECORD **<br />';
+	$fmx = new FMXData();
+	$duplicateRecord = $fmx->fmxDuplicateRecord('CONTACT',15297);
+	print_r($duplicateRecord);
+	echo '<br /><br />';
 
 	// get an existing record
 	echo '** GET RECORD **<br />';
