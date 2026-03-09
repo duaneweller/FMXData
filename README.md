@@ -28,6 +28,7 @@ fmxData supports all of the following Data API features.
 - Create a Record
 - Edit a Record
 - Delete a Record
+- Duplicate a Record
 - Get a Record
 - Get a Range of Records
 - Upload a File to a Container Field
@@ -54,7 +55,7 @@ fmxData does not yet support the following FileMaker Data API features.
 - Logging or Debugging
 - Checks or traps for FileMaker errors
 
-The log in features were not necessarily needed for what I plan to use fmxData for but may be added in some future version. Record duplication does not appear to be working as documented in the FileMaker Data API documentation. If at some point Claris updates the documentation, perhaps additional features and functions may be added to fmxData. To keep this class lightweight I have not implemented any kind of logging or debugging. Some of the other PHP classes available offer those features. FMXData does not check or test for errors returned by the FileMaker Server Data API. The entire response is retuned to the calling script so that you can manage the FileMaker errors in your own PHP.
+The log in features were not necessarily needed for what I plan to use fmxData for but may be added in some future version. To keep this class lightweight I have not implemented any kind of logging or debugging. Some of the other PHP classes available oﬀer those features. FMXData does not check or test for errors returned by the FileMaker Data API. The entire response is retuned to the calling script so that you can manage the FileMaker errors in your own PHP.
 
 ## PREPARING FILEMAKER SERVER
 
