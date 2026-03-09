@@ -92,5 +92,5 @@ http://[localhost or web servers ip]/example.php
 
 ## FOR FURTHER INFORMATION ABOUT THE FUNCTIONS CHECK OUT THE MANUAL
 
-[manual.pdf](fmxData-doc-030.pdf)
+[fmxData-doc-030.pdf](fmxData-doc-030.pdf)
 
